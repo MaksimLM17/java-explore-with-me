@@ -34,10 +34,6 @@ public class StatisticServiceImpl implements StatisticService {
         log.debug("Получен запрос на выгрузку статистики с данными:" +
                 " start =  {}, end =  {}, uris.size() = {}, unique =  {}", start, end, uris.size(), unique);
         checkTime(start, end);
-      /*  if (uris.isEmpty()) {
-            log.error("Список uri пуст!");
-            throw new BadRequestException("Список uri пуст!");
-        }*/
         if (unique) {
             log.info("Отправлен список данных с уникальными ip!");
             return statisticRepository.findAllUriUnique(start, end, uris).stream()

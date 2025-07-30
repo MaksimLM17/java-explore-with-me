@@ -63,4 +63,16 @@ public class ErrorHandlerStat {
         log.error(errorMessage);
         return ErrorResponse.builder().error(errorMessage).details(e.getMessage()).build();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleOtherException(Exception e) {
+        String exceptionClassName = e.getClass().getSimpleName();
+        log.error("{}: {}", exceptionClassName, e.getMessage());
+
+        return ErrorResponse.builder()
+                .error(exceptionClassName)
+                .details(e.getMessage())
+                .build();
+    }
 }
