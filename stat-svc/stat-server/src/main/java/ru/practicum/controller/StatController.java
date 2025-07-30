@@ -18,12 +18,12 @@ public class StatController {
 
     private final StatisticService service;
 
-    @PostMapping("/hits")
+    @PostMapping("/hit")
     public EndpointHitDto create(@RequestBody @Valid EndpointHitDto endpointHitDto) {
         return service.create(endpointHitDto);
     }
 
-    @GetMapping("/events")
+    @GetMapping("/stats")
     public List<ViewStatsDto> getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                        @RequestParam (required = false) List<String> uris,
