@@ -1,14 +1,80 @@
+version: '3.8'
+
 services:
-  stats-server:
-    ports:
-      - "9090:9090"
-
-  stats-db:
+  # Основная база данных (main-server)
+  postgres-main:
     image: postgres:16.1
+    container_name: postgres-main
+    environment:
+      POSTGRES_DB: main-server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "6541:5432"
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  ewm-service:
+  # База данных для статистики (stats-server)
+  postgres-stat:
+    image: postgres:16.1
+    container_name: postgres-stat
+    environment:
+      POSTGRES_DB: stats-server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "6542:5432"
+    volumes:
+      - postgres_stat_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Основное приложение (main-server)
+  main-service:
+    build:
+      context: ./evm-main-service
+      dockerfile: Dockerfile
+      args:
+        - JAR_FILE=target/evm-main-service-0.0.1-SNAPSHOT.jar
+    container_name: main-service
+    depends_on:
+      postgres-main:
+        condition: service_healthy
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main-server
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+    restart: unless-stopped
 
-  ewm-db:
-    image: postgres:16.1
+  # Сервис статистики (stat-server)
+  stat-service:
+    build:
+      context: ./stat-svc/stat-server
+      dockerfile: Dockerfile
+      args:
+        - JAR_FILE=target/stat-server-0.0.1-SNAPSHOT.jar
+    container_name: stat-service
+    depends_on:
+      postgres-stat:
+        condition: service_healthy
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stats-server
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+    restart: unless-stopped
+
+volumes:
+  postgres_main_data:
+  postgres_stat_data:
