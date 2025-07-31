@@ -31,8 +31,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        log.debug("Получен запрос на выгрузку статистики с данными:" +
-                " start =  {}, end =  {}, uris.size() = {}, unique =  {}", start, end, uris.size(), unique);
+        log.debug("Получен запрос на выгрузку статистики");
         checkTime(start, end);
         if (unique) {
             log.info("Отправлен список данных с уникальными ip!");

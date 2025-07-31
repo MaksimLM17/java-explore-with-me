@@ -42,8 +42,6 @@ services:
     build:
       context: ./evm-main-service
       dockerfile: Dockerfile
-      args:
-        - JAR_FILE=target/evm-main-service-0.0.1-SNAPSHOT.jar
     container_name: main-service
     depends_on:
       postgres-main:
@@ -61,8 +59,6 @@ services:
     build:
       context: ./stat-svc/stat-server
       dockerfile: Dockerfile
-      args:
-        - JAR_FILE=target/stat-server-0.0.1-SNAPSHOT.jar
     container_name: stat-service
     depends_on:
       postgres-stat:
