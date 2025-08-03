@@ -40,7 +40,7 @@ services:
   # Основное приложение (main-server)
   main-service:
     build:
-      context: ./evm-main-service
+      context: ./ewm-main-service
       dockerfile: Dockerfile
     container_name: main-service
     depends_on:
