@@ -7,28 +7,31 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalHandler {
 
+    private final static String BAD_VALID = "Ошибка валидации";
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleValidationExceptionNotFound(NotFoundException e) {
-        return ErrorResponse.builder().error("Ошибка валидации").details(e.getMessage()).build();
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationExceptionBadRequest(BadRequestException e) {
-        return ErrorResponse.builder().error("Ошибка валидации").details(e.getMessage()).build();
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidationDuplicateEmail(DuplicateEmailException e) {
-        return ErrorResponse.builder().error("Ошибка валидации").details(e.getMessage()).build();
+    public ErrorResponse handleValidationDuplicateEmail(UniqueConflictException e) {
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
     }
 
     @ExceptionHandler
@@ -42,7 +45,7 @@ public class GlobalHandler {
                     .append("; ");
         });
         log.error("Ошибка валидации: {}", errorMessage);
-        return ErrorResponse.builder().error("Ошибка валидации").details(errorMessage.toString()).build();
+        return ErrorResponse.builder().error(BAD_VALID).details(errorMessage.toString()).build();
     }
 
     @ExceptionHandler
@@ -56,7 +59,7 @@ public class GlobalHandler {
                     .append("; ");
         });
         log.error("Ошибка валидации: {}", errorMessage);
-        return ErrorResponse.builder().error("Ошибка валидации").details(errorMessage.toString()).build();
+        return ErrorResponse.builder().error(BAD_VALID).details(errorMessage.toString()).build();
     }
 
     @ExceptionHandler
@@ -68,6 +71,26 @@ public class GlobalHandler {
                 parameterName, parameterValue);
         log.error(errorMessage);
         return ErrorResponse.builder().error(errorMessage).details(e.getMessage()).build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleHandlerMethodValidation(HandlerMethodValidationException e) {
+        StringBuilder details = new StringBuilder();
+        e.getAllValidationResults().forEach(result -> {
+            String name = result.getMethodParameter().getParameterName();
+            result.getResolvableErrors().forEach(error -> {
+                details.append(name)
+                        .append(": ")
+                        .append(error.getDefaultMessage())
+                        .append("; ");
+            });
+        });
+        log.error("Ошибка валидации параметров: {}", details);
+        return ErrorResponse.builder()
+                .error(BAD_VALID)
+                .details(details.toString())
+                .build();
     }
 
     @ExceptionHandler

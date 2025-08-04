@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.DuplicateEmailException;
+import ru.practicum.exception.UniqueConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.UserMapper;
 import ru.practicum.users.dto.UserDto;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         boolean hasEmail = userRepository.existsByEmail(email);
         if (hasEmail) {
             log.error("Пользователь с данным email = {}, уже существует!", email);
-            throw new DuplicateEmailException("Пользователь с данным email уже существует");
+            throw new UniqueConflictException("Пользователь с данным email уже существует");
         }
     }
 }
