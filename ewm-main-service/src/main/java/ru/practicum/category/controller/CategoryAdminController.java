@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.category.service.CategoryAdminService;
+import ru.practicum.category.service.admin.CategoryAdminService;
 
 @RestController
 @RequestMapping("/admin/categories")

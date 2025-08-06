@@ -1,6 +1,7 @@
-package ru.practicum.category.service;
+package ru.practicum.category.service.open;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     private final CategoryMapper categoryMapper;
@@ -35,6 +37,7 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     public CategoryDto findById(Integer catId) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория по id = %d не найдена".formatted(catId)));
+        log.info("Отправлена категория: {}", category);
         return categoryMapper.mapToDto(category);
     }
 }
