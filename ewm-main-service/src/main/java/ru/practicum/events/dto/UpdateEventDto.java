@@ -6,22 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.events.location.Location;
+import ru.practicum.events.state.StateAction;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewEventDto {
+public class UpdateEventDto {
 
-    @NotBlank(message = "Краткое описание события не может быть пустым или содержать только пробелы!")
     @Size(min = 20, max = 2000, message = "Краткое описание события не может содержать больше 2000 символов и меньше 20!")
     private String annotation;
-    
-    @NotNull(message = "Id категории должен быть указан!")
+
     private Integer category;
 
-    @NotBlank(message = "Описание события не может быть пустым или содержать только пробелы!")
     @Size(min = 20, max = 7000, message = "Описание события не может содержать больше 7000 символов и меньше 20!")
     private String description;
 
@@ -29,16 +27,15 @@ public class NewEventDto {
     @Future(message = "Дата события должна быть в будущем")
     private LocalDateTime eventDate;
 
-    @NotNull(message = "Координаты места проведения должны быть указаны!")
     private Location location;
-    private Boolean paid = false;
+    private Boolean paid;
 
     @PositiveOrZero(message = "Количество участников не может быть меньше нуля! Ноль-без ограничения по количеству!")
-    private Integer participantLimit = 0;
-    private Boolean requestModeration = true;
+    private Integer participantLimit;
+    private Boolean requestModeration;
 
-    @NotBlank(message = "Заголовок должен быть указан!")
+    private StateAction stateAction;
+
     @Size(min = 3, max = 120, message = "Заголовок не может содержать больше 120 и меньше 3-х символов!")
     private String title;
-
 }

@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.NewEventDto;
-import ru.practicum.events.service.close.EventsPrivateService;
+import ru.practicum.events.dto.UpdateEventDto;
+import ru.practicum.events.service.close.EventPrivateService;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventsPrivateController {
 
-    private final EventsPrivateService eventsPrivateService;
-    private final static String MESSAGE_ERROR_ID = "Id пользователя не должно быть меньше единицы!";
+    private final EventPrivateService eventPrivateService;
+    private final static String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,7 +29,7 @@ public class EventsPrivateController {
                            @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId) {
         log.info("Получен запрос на добавление нового события: {}" +
                 " пользователем: {}", newEventDto, userId);
-        return eventsPrivateService.create(newEventDto, userId);
+        return eventPrivateService.create(newEventDto, userId);
     }
 
     @GetMapping
@@ -39,7 +40,28 @@ public class EventsPrivateController {
                 Получен запрос на получение всех событий пользователя: {}\s
                 from = {}\s
                 size = {}""", userId, from, size);
-        return eventsPrivateService.getAllEventsUser(userId, from, size);
+        return eventPrivateService.getAllEventsUser(userId, from, size);
+    }
+
+    @GetMapping("/{eventId}")
+    public EventDto getById(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
+                            @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer eventId) {
+        log.info("Получен запрос на получение события с eventId = {}, создателем с userId = {}", eventId, userId);
+        return eventPrivateService.getById(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}")
+    public EventDto update(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
+                           @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer eventId,
+                           @RequestBody @Valid UpdateEventDto updateEventDto) {
+        log.info("""
+                Получен запрос на обновление события с данными:\s
+                userId = {}\s
+                eventId = {}\s
+                eventDto = {}""", userId, eventId, updateEventDto);
+
+        return eventPrivateService.update(userId, eventId, updateEventDto);
+
     }
 
 }

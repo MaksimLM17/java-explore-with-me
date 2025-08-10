@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.events.location.Location;
+import ru.practicum.events.state.State;
 import ru.practicum.users.model.User;
 
 import java.time.LocalDateTime;
@@ -67,4 +68,17 @@ public class Event {
     @Column(nullable = false)
     private State state;
     private String title;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return id != null && id.equals(event.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

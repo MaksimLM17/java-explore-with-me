@@ -30,7 +30,31 @@ public class GlobalHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidationDuplicateEmail(UniqueConflictException e) {
+    public ErrorResponse handleValidationUniqueException(UniqueConflictException e) {
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenException(ForbiddenException e) {
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDateTimeException(InvalidDateTimeException e) {
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEventSateException(EventStateException e) {
+        return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflictException(ConflictException e) {
         return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
     }
 
