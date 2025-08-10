@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.events.repository.EventRepository;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.UniqueConflictException;
 import ru.practicum.mapper.CategoryMapper;
@@ -17,6 +19,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
 
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
@@ -31,6 +34,11 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
         if (!categoryRepository.existsById(catId)) {
             log.error("Категория с id = {}, не найдена!", catId);
             throw new NotFoundException("Категория по id = %d не найдена".formatted(catId));
+        }
+
+        if (eventRepository.existsByCategoryId(catId)) {
+            log.error("Попытка удалить категорию к которой привязаны события! Id = {}", catId);
+            throw new ConflictException("К данной категории привязаны события!");
         }
         categoryRepository.deleteById(catId);
         log.error("Категория с id = {}, удалена!", catId);

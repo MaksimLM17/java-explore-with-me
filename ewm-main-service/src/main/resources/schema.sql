@@ -42,7 +42,7 @@ CREATE TABLE requests (
   event_id integer NOT NULL,
   requester_id integer NOT NULL,
   created_on TIMESTAMP NOT NULL,
-  state varchar(15) NOT NULL CHECK (state IN ('PENDING', 'PUBLISHED', 'CANCELED', 'REJECTED')),
+  state varchar(15) NOT NULL CHECK (state IN ('PENDING', 'CONFIRMED', 'CANCELED', 'REJECTED')),
   CONSTRAINT pk_requests PRIMARY KEY (request_id),
   CONSTRAINT fk_request_users FOREIGN KEY (requester_id) REFERENCES users (user_id) ON DELETE CASCADE,
   CONSTRAINT fk_request_event FOREIGN KEY (event_id) REFERENCES events (event_id) ON DELETE CASCADE
