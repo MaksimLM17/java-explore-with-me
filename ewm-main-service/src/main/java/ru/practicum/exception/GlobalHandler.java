@@ -48,7 +48,7 @@ public class GlobalHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEventSateException(EventStateException e) {
+    public ErrorResponse handleEventSateException(StateException e) {
         return ErrorResponse.builder().error(BAD_VALID).details(e.getMessage()).build();
     }
 

@@ -7,7 +7,7 @@ import ru.practicum.events.model.Event;
 import ru.practicum.events.state.State;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.EventStateException;
+import ru.practicum.exception.StateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.RequestMapper;
 import ru.practicum.requests.dto.ParticipationRequestDto;
@@ -59,12 +59,29 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ParticipationRequestDto> getRequestsUserId(Integer userId) {
-        return List.of();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id = %d, не найден!".formatted(userId)));
+
+        return requestRepository.findByRequesterId(userId).stream()
+                .map(requestMapper::mapToDto)
+                .toList();
     }
 
     @Override
     public ParticipationRequestDto cancelRequestId(Integer userId, Integer requestId) {
-        return null;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id = %d, не найден!".formatted(userId)));
+        ParticipationRequest participationRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Запрос с id = %s, не найден!".formatted(requestId)));
+
+        if (!participationRequest.getStatus().equals(RequestState.PENDING)) {
+            log.error("Попытка отменить запрос со статусом: {}", participationRequest.getStatus());
+            throw new StateException("Отменить запрос можно только со статусом в ожидании!");
+        }
+
+        participationRequest.setStatus(RequestState.CANCELED);
+        log.info("Успешная отмена запрос с id = {}", requestId);
+        return requestMapper.mapToDto(requestRepository.save(participationRequest));
     }
 
     private void validationCreated(User user, Event event) {
@@ -78,7 +95,7 @@ public class RequestServiceImpl implements RequestService {
 
         if (!event.getState().equals(State.PUBLISHED)) {
             log.error("Попытка записаться на событие со статусом: {}", event.getState());
-            throw new EventStateException("Событие не опубликовано!");
+            throw new StateException("Событие не опубликовано!");
         }
 
         if (Objects.equals(event.getParticipantLimit(), event.getConfirmedRequests()) && event.getParticipantLimit() != 0) {

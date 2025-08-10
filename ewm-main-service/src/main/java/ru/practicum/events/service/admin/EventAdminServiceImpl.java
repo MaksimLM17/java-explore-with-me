@@ -2,7 +2,6 @@ package ru.practicum.events.service.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.state.State;
 import ru.practicum.events.state.StateAction;
-import ru.practicum.exception.EventStateException;
+import ru.practicum.exception.StateException;
 import ru.practicum.exception.InvalidDateTimeException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
@@ -66,7 +65,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         if ((event.getState().equals(State.CANCELED) || (event.getState().equals(State.PUBLISHED))) ) {
             log.error("Попытка публикации события со статусом: {}", event.getState());
-            throw new EventStateException("Нельзя опубликовать отмененное или опубликованное событие!");
+            throw new StateException("Нельзя опубликовать отмененное или опубликованное событие!");
         }
 
         if (updateAdminEventDto.getStateAction() != null) {
@@ -78,7 +77,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                     event.setPublishedOn(LocalDateTime.now());
                 }
                 case REJECT_EVENT -> event.setState(State.CANCELED);
-                default -> throw new EventStateException("Некорректный статус: %s".formatted(updateState));
+                default -> throw new StateException("Некорректный статус: %s".formatted(updateState));
             }
         }
 

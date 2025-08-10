@@ -14,7 +14,7 @@ import ru.practicum.events.dto.UpdateEventDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.state.State;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exception.EventStateException;
+import ru.practicum.exception.StateException;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.InvalidDateTimeException;
 import ru.practicum.exception.NotFoundException;
@@ -92,7 +92,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
         if (event.getState().equals(State.PUBLISHED)) {
             log.error("Попытка изменить событие со статусом {}", event.getState());
-            throw new EventStateException("Изменять можно только отмененные или ожидающие модерации события!");
+            throw new StateException("Изменять можно только отмененные или ожидающие модерации события!");
         }
 
         if (updateEventDto.getStateAction() != null) {
