@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.events.dto.EventDto;
-import ru.practicum.events.dto.NewEventDto;
-import ru.practicum.events.dto.UpdateEventDto;
+import ru.practicum.events.dto.*;
 import ru.practicum.events.service.close.EventPrivateService;
+import ru.practicum.requests.dto.ParticipationRequestDto;
 
 import java.util.List;
 
@@ -61,7 +60,27 @@ public class EventsPrivateController {
                 eventDto = {}""", userId, eventId, updateEventDto);
 
         return eventPrivateService.update(userId, eventId, updateEventDto);
-
     }
+
+    @GetMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> getAllRequestsForEvents(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
+                                                                 @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer eventId) {
+        log.info("Получен запрос для получения всех заявок на участие в событии с eventId = {}, пользователем с userId = {}",
+                eventId, userId);
+        return eventPrivateService.getAllRequestsForEvents(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    public EventStatusUpdateResult updateRequests(@RequestBody @Valid EventStatusUpdateRequest eventStatusUpdateRequest,
+                                                  @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
+                                                  @PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer eventId) {
+        log.info("""
+                Получен запрос на обновление заявок на участие в событии с данными:\s
+                userId = {}
+                eventId = {}
+                eventStatusUpdate = {}""", userId, eventId, eventStatusUpdateRequest);
+        return eventPrivateService.updateRequests(userId, eventId, eventStatusUpdateRequest);
+    }
+
 
 }

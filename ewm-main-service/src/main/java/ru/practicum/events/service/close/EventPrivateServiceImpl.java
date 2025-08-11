@@ -8,21 +8,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.events.dto.EventDto;
-import ru.practicum.events.dto.NewEventDto;
-import ru.practicum.events.dto.UpdateEventDto;
+import ru.practicum.events.dto.*;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.state.State;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exception.StateException;
-import ru.practicum.exception.ForbiddenException;
-import ru.practicum.exception.InvalidDateTimeException;
-import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.*;
 import ru.practicum.mapper.EventMapper;
+import ru.practicum.mapper.RequestMapper;
+import ru.practicum.requests.dto.ParticipationRequestDto;
+import ru.practicum.requests.model.ParticipationRequest;
+import ru.practicum.requests.model.RequestState;
+import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +36,8 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
+    private final RequestRepository requestRepository;
+    private final RequestMapper requestMapper;
 
     @Override
     public EventDto create(NewEventDto newEventDto, Integer userId) {
@@ -114,6 +117,81 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return eventMapper.mapToDto(eventRepository.save(event));
     }
 
+    @Override
+    public List<ParticipationRequestDto> getAllRequestsForEvents(Integer userId, Integer eventId) {
+        Event event = validateDataId(userId, eventId);
+
+        return requestRepository.findAllByEventId(eventId).stream()
+                .map(requestMapper::mapToDto)
+                .toList();
+    }
+
+    @Override
+    public EventStatusUpdateResult updateRequests(Integer userId, Integer eventId,
+                                                  EventStatusUpdateRequest eventStatusUpdateRequest) {
+        Event event = validateDataId(userId, eventId);
+
+        if (event.getState().equals(State.CANCELED)) {
+            log.error("Попытка обновить статус заявки у отмененного события!");
+            throw new StateException("Событие отменено! Нельзя обновить статус заявки на участие!");
+        }
+
+        List<ParticipationRequest> requests = requestRepository.findAllById(eventStatusUpdateRequest.getRequestIds());
+
+        for (ParticipationRequest request : requests) {
+            if (request.getStatus() != RequestState.PENDING) {
+                log.error("Попытка обновить запрос с некорректным статусом: {}", request.getStatus());
+                throw new StateException("Обрабатывать запросы можно только в статусе PENDING");
+            }
+
+            if (!request.getEvent().getId().equals(eventId)) {
+                log.error("Передан запрос на участие для другого события! EventId = {}, request.getEventId = {}", eventId,
+                        request.getEvent().getId());
+                throw new ConflictException("Передан запрос на участие для другого события!");
+            }
+        }
+
+        if (Objects.equals(event.getParticipantLimit(), event.getConfirmedRequests())) {
+            throw new ConflictException("Нет свободных мест для участия в данном событии.");
+        }
+
+
+        RequestState status = eventStatusUpdateRequest.getStatus();
+
+        List<ParticipationRequest> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequest> rejectedRequests = new ArrayList<>();
+
+        int limit = event.getParticipantLimit();
+        int confirmed = event.getConfirmedRequests();
+
+        if (status.equals(RequestState.CONFIRMED)) {
+            log.info("При обработке запросов на подтверждение значение limit = {}, confirmed = {}, количество запросов = {}",
+                    limit, confirmed, requests.size());
+            for (ParticipationRequest request : requests) {
+                if (limit > confirmed) {
+                    request.setStatus(RequestState.CONFIRMED);
+                    confirmedRequests.add(request);
+                    confirmed++;
+                } else {
+                    request.setStatus(RequestState.REJECTED);
+                    rejectedRequests.add(request);
+                }
+            }
+            savedConfirmedRequests(event, confirmedRequests.size());
+        } else if (status.equals(RequestState.REJECTED)) {
+            for (ParticipationRequest request : requests) {
+                request.setStatus(RequestState.REJECTED);
+                rejectedRequests.add(request);
+            }
+        }
+        requestRepository.saveAll(requests);
+        log.info("Запросы к событию = {}, обработаны в количестве = {}", eventId, requests.size());
+        return new EventStatusUpdateResult(
+                confirmedRequests.stream().map(requestMapper::mapToDto).toList(),
+                rejectedRequests.stream().map(requestMapper::mapToDto).toList()
+        );
+    }
+
     private Event validateDataId(Integer userId, Integer eventId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id = %d, не найден!".formatted(userId)));
@@ -131,5 +209,11 @@ public class EventPrivateServiceImpl implements EventPrivateService {
             log.warn("Начало события не раньше чем через два часа с момента создания!");
             throw new InvalidDateTimeException("Начало события должно быть не раньше чем через два часа с момента создания!");
         }
+    }
+
+    private void savedConfirmedRequests(Event event, int count) {
+        event.setConfirmedRequests(event.getConfirmedRequests() + count);
+        eventRepository.save(event);
+        log.info("Количество подтвержденных заявок = {}, у события = {}", event.getConfirmedRequests(), event.getId());
     }
 }
