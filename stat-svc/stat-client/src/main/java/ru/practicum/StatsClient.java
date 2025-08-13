@@ -1,6 +1,7 @@
 package ru.practicum;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +16,24 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class StatsClient extends BaseClient {
 
     private String appName;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Autowired
+
     public StatsClient(@Value("${stat-server.url}") String serverUrl,
                        @Value("${app.name}") String appName) {
         super(createRestClient(serverUrl));
+        log.info("StatsClient initialized with URL: {}", serverUrl);
         this.appName = appName;
     }
 
     private static RestClient createRestClient(String serverUrl) {
+        log.info("Creating RestClient for URL: {}", serverUrl);
         return RestClient.builder()
                 .baseUrl(serverUrl)
-                .requestFactory(new HttpComponentsClientHttpRequestFactory())
                 .build();
     }
 
