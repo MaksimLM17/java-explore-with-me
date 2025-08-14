@@ -49,6 +49,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                 pageable
         );
 
+        log.info("Получен список событий размером: {}", events.size());
         return events.stream()
                 .map(eventMapper::mapToDto)
                 .toList();

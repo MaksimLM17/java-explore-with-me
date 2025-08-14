@@ -23,7 +23,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public EndpointHitDto create(EndpointHitDto endpointHitDto) {
-        log.debug("Получен запрос на создание хита: {}", endpointHitDto);
+        log.info("Получен запрос на создание хита: {}", endpointHitDto);
         EndpointHit endpointHit = statisticRepository.save(mapper.mapToModelEndpoint(endpointHitDto));
         log.info("Хит сохранен в БД с данными: {}", endpointHit);
         return mapper.mapToDtoEndpoint(endpointHit);
@@ -31,7 +31,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        log.debug("Получен запрос на выгрузку статистики");
+        log.info("Получен запрос на выгрузку статистики");
         checkTime(start, end);
         if (unique) {
             log.info("Отправлен список данных с уникальными ip!");

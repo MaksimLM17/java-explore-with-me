@@ -24,6 +24,7 @@ import ru.practicum.exception.StateException;
 import ru.practicum.mapper.EventMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,9 @@ public class EventPublicServiceImpl implements EventPublicService {
 
     @Override
     public List<EventDto> getAll(SearchPublishedEvents publishedEvents, HttpServletRequest request) {
-        log.info("Данные запроса: {}, {}", request.getRequestURI(), request.getRemoteAddr());
+
         saveStatistics(request);
+        log.info("Вызов запроса сохранен в сервисе статистики");
 
         Specification<Event> spec = Specification.where(EventSpecifications.isPublished());
 
@@ -71,19 +73,20 @@ public class EventPublicServiceImpl implements EventPublicService {
             spec = spec.and(EventSpecifications.isAvailable());
         }
 
-        Sort sort = buildSort(publishedEvents.getSort());
+        logSpecification(publishedEvents);
 
+        Sort sort = buildSort(publishedEvents.getSort());
+        log.info("Сортировка: {}", publishedEvents.getSort());
         Pageable pageable = PageRequest.of(publishedEvents.getFrom() / publishedEvents.getSize(),
                 publishedEvents.getSize(),
                 sort);
 
         List<Event> events = eventRepository.findAll(spec, pageable).getContent();
 
+        log.info("Получен список событий размером: {}", events.size());
 
-        // Получаем статистику просмотров для всех событий
         Map<Integer, Long> views = getViewsForEvents(events, request);
 
-        // Преобразуем в DTO и устанавливаем просмотры
         return events.stream()
                 .map(eventMapper::mapToDto)
                 .peek(dto -> dto.setViews(views.getOrDefault(dto.getId(), 0L)))
@@ -152,6 +155,7 @@ public class EventPublicServiceImpl implements EventPublicService {
     }
 
     private Map<Integer, Long> getViewsForEvents(List<Event> events, HttpServletRequest request) {
+        log.info("Получаем статистику от сервера!");
         if (events.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -167,6 +171,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             ResponseEntity<Object> response = statsClient.getStats(start, end, uris, true);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 List<ViewStatsDto> stats = parseStatsResponse(response.getBody());
+                log.info("Получена статистика с данными: {}", stats);
                 return stats.stream()
                         .collect(Collectors.toMap(
                                 stat -> extractEventIdFromUri(stat.getUri()),
@@ -177,6 +182,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             log.error("Ошибка при получении статистики для списка событий: {}", e.getMessage());
         }
 
+        log.info("Вернулась пустая коллекция!");
         return Collections.emptyMap();
     }
 
@@ -187,5 +193,32 @@ public class EventPublicServiceImpl implements EventPublicService {
             log.error("Не удалось извлечь ID события из URI: {}", uri);
             return null;
         }
+    }
+
+    private void logSpecification(SearchPublishedEvents criteria) {
+        List<String> conditions = new ArrayList<>();
+
+        if (criteria.getText() != null && !criteria.getText().isBlank()) {
+            conditions.add("containsText(" + criteria.getText() + ")");
+        }
+        if (criteria.getCategories() != null && !criteria.getCategories().isEmpty()) {
+            conditions.add("hasCategories(" + criteria.getCategories() + ")");
+        }
+        if (criteria.getPaid() != null) {
+            conditions.add("isPaid(" + criteria.getPaid() + ")");
+        }
+        if (criteria.getRangeStart() != null) {
+            conditions.add("eventDateAfter(" + criteria.getRangeStart() + ")");
+        } else {
+            conditions.add("eventDateAfter(" + LocalDateTime.now() + ")");
+        }
+        if (criteria.getRangeEnd() != null) {
+            conditions.add("eventDateBefore(" + criteria.getRangeEnd() + ")");
+        }
+        if (criteria.getOnlyAvailable()) {
+            conditions.add("isAvailable()");
+        }
+
+        log.info("Спецификация со всеми параметрами: {}", String.join(" и ", conditions));
     }
 }
