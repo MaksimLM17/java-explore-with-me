@@ -42,7 +42,7 @@ public class RequestServiceImpl implements RequestService {
 
         ParticipationRequest participationRequest;
 
-        if ((!event.isRequestModeration()) &&
+        if (!(event.isRequestModeration()) &&
                 (event.getParticipantLimit() > event.getConfirmedRequests() || event.getParticipantLimit() == 0)) {
             participationRequest = createNewRequest(user, event, RequestState.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);

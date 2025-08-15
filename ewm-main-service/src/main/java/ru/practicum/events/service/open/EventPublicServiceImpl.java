@@ -101,7 +101,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         if (event.getState() != State.PUBLISHED) {
             log.error("Попытка получить информацию о неопубликованном событии со статусом: {}, eventId = {}",
                     event.getState(), id);
-            throw new StateException("Событие должно быть опубликовано!");
+            throw new NotFoundException("Событие должно быть опубликовано!");
         }
         saveStatistics(request);
 

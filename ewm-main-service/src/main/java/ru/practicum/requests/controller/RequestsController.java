@@ -1,10 +1,12 @@
 package ru.practicum.requests.controller;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.service.RequestService;
 
@@ -22,7 +24,7 @@ public class RequestsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto create(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
-                                          @RequestParam @Positive(message = MESSAGE_ERROR_ID) Integer eventId) {
+                                          @RequestParam(defaultValue = "0") @Positive(message = MESSAGE_ERROR_ID)  Integer eventId) {
         log.info("""
                 Получен запрос на создание нового запроса на участие в событии, с данными:\s
                 userId = {}\s
