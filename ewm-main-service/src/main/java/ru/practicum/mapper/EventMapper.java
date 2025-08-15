@@ -7,7 +7,7 @@ import ru.practicum.events.dto.UpdateAdminEventDto;
 import ru.practicum.events.dto.UpdateEventDto;
 import ru.practicum.events.model.Event;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class})
 public interface EventMapper {
 
     @Mapping(target = "category", ignore = true)
@@ -23,5 +23,4 @@ public interface EventMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", ignore = true)
     void mapToModelFromUpdateAdminDto(UpdateAdminEventDto updateAdminEventDto, @MappingTarget Event event);
-
 }
