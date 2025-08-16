@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # Основная база данных (main-server)
@@ -46,6 +45,13 @@ services:
     depends_on:
       postgres-main:
         condition: service_healthy
+      stat-service:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f http://ewm-main-service:8080/actuator/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
     ports:
       - "8080:8080"
     environment:
@@ -63,6 +69,11 @@ services:
     depends_on:
       postgres-stat:
         condition: service_healthy
+    healthcheck:
+      test: curl -f http://stat-server:9090/actuator/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
     ports:
       - "9090:9090"
     environment:
