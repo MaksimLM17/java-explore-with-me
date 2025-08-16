@@ -5,7 +5,7 @@ services:
     image: postgres:16.1
     container_name: postgres-main
     environment:
-      POSTGRES_DB: main-server
+      POSTGRES_DB: main-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
     ports:
@@ -23,7 +23,7 @@ services:
     image: postgres:16.1
     container_name: postgres-stat
     environment:
-      POSTGRES_DB: stats-server
+      POSTGRES_DB: stats-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
     ports:
@@ -45,29 +45,29 @@ services:
     depends_on:
       postgres-main:
         condition: service_healthy
-      stat-service:
+      stats-server:
         condition: service_started
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main-server
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main-db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123
     restart: unless-stopped
 
   # Сервис статистики (stat-server)
-  stat-service:
+  stats-server:
     build:
       context: ./stat-svc/stat-server
       dockerfile: Dockerfile
-    container_name: stat-service
+    container_name: stats-server
     depends_on:
       postgres-stat:
         condition: service_healthy
     ports:
       - "9090:9090"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stats-server
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stats-db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123
     restart: unless-stopped
