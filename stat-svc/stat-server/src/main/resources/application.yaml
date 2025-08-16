@@ -3,6 +3,8 @@ server:
 
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jpa:
     hibernate:
       ddl-auto: none
@@ -14,11 +16,9 @@ spring:
           lob:
             non_contextual_creation: true
       show-sql: true
-
   sql:
     init:
       mode: always
-
   datasource:
     url: jdbc:postgresql://stats-server:5432/stats-db
     username: sa

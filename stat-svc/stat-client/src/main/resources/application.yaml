@@ -1,5 +1,2 @@
 stats.server:
   url: http://stats-server:9090
-
-app:
-  name: ewm-main-service
