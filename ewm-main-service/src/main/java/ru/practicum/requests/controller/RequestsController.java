@@ -1,12 +1,10 @@
 package ru.practicum.requests.controller;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.exception.BadRequestException;
 import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.service.RequestService;
 
@@ -19,7 +17,7 @@ import java.util.List;
 public class RequestsController {
 
     private final RequestService requestService;
-    private final static String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
+    private static final String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

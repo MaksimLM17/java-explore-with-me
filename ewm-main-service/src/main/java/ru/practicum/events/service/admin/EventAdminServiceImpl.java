@@ -64,7 +64,7 @@ public class EventAdminServiceImpl implements EventAdminService {
             throw new InvalidDateTimeException("Начало события меньше чем через час!");
         }
 
-        if ((event.getState().equals(State.CANCELED) || (event.getState().equals(State.PUBLISHED))) ) {
+        if ((event.getState().equals(State.CANCELED) || (event.getState().equals(State.PUBLISHED)))) {
             log.error("Попытка публикации события со статусом: {}", event.getState());
             throw new StateException("Нельзя опубликовать отмененное или опубликованное событие!");
         }

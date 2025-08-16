@@ -14,7 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @Slf4j
 public class GlobalHandler {
 
-    private final static String BAD_VALID = "Ошибка валидации";
+    private static final String BAD_VALID = "Ошибка валидации";
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

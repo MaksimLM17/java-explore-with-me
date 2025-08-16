@@ -1,8 +1,5 @@
 package ru.practicum.events.service.close;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import ru.practicum.events.dto.*;
 import ru.practicum.requests.dto.ParticipationRequestDto;
 

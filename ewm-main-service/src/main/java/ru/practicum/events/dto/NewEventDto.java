@@ -17,7 +17,6 @@ public class NewEventDto {
     @NotBlank(message = "Краткое описание события не может быть пустым или содержать только пробелы!")
     @Size(min = 20, max = 2000, message = "Краткое описание события не может содержать больше 2000 символов и меньше 20!")
     private String annotation;
-    
     @NotNull(message = "Id категории должен быть указан!")
     private Integer category;
 
@@ -40,5 +39,4 @@ public class NewEventDto {
     @NotBlank(message = "Заголовок должен быть указан!")
     @Size(min = 3, max = 120, message = "Заголовок не может содержать больше 120 и меньше 3-х символов!")
     private String title;
-
 }

@@ -15,7 +15,6 @@ import ru.practicum.compilations.model.Compilation;
 import ru.practicum.compilations.repository.CompilationRepository;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.events.model.Event;
-import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.CompilationMapper;

@@ -18,7 +18,7 @@ import ru.practicum.compilations.service.admin.CompilationAdminService;
 public class CompilationAdminController {
 
     private final CompilationAdminService adminService;
-    private final static String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
+    private static final String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

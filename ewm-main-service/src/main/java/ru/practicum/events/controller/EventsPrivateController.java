@@ -20,7 +20,7 @@ import java.util.List;
 public class EventsPrivateController {
 
     private final EventPrivateService eventPrivateService;
-    private final static String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
+    private static final String MESSAGE_ERROR_ID = "Id не должно быть меньше единицы!";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
