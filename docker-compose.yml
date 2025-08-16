@@ -45,7 +45,7 @@ services:
     depends_on:
       postgres-main:
         condition: service_healthy
-      stats-service:
+      stat-service:
         condition: service_started
     ports:
       - "8080:8080"
