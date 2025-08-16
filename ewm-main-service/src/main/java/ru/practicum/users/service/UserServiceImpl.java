@@ -7,8 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.UniqueConflictException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.UniqueConflictException;
 import ru.practicum.mapper.UserMapper;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.dto.UserShortDto;
@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
             log.warn("Пользователь с id = {}, не найден!", userId);
             throw new NotFoundException("Пользователь с id = %d, не найден!".formatted(userId));
         }
+
         userRepository.deleteById(userId);
         log.info("Пользователь с id = {}, удалён!", userId);
     }
