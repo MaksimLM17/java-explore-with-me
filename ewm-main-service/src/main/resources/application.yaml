@@ -1,11 +1,6 @@
 server:
   port: 8080
 
-stat-server:
-  url: http://localhost:9090
-
-app:
-  name: ewm-main-service
 spring:
   jpa:
     hibernate:

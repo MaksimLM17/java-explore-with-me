@@ -1,3 +1,5 @@
 
 stat-server:
-  url: http://localhost:9090
+  url: http://stat-server:9090
+app:
+  name: ewm-main-service
