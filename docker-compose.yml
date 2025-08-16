@@ -1,76 +1,75 @@
 services:
-  stats-server:
-    build:
-      context: ./stats/stats-server
-      dockerfile: Dockerfile
-    container_name: stats-server
-    ports:
-      - "9090:9090"
-    depends_on:
-      stats-db:
-        condition: service_healthy
-    healthcheck:
-      test: curl -f http://stats-server:9090/actuator/health || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats-db
-      SPRING_DATASOURCE_USERNAME: sa
-      SPRING_DATASOURCE_PASSWORD: password
-
-  stats-db:
+  # Основная база данных (main-server)
+  postgres-main:
     image: postgres:16.1
-    container_name: stats-db
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./volumes/postgres/stats-db:/var/lib/postgresql/data/
+    container_name: postgres-main
     environment:
-      - POSTGRES_DB=stats-db
-      - POSTGRES_USER=sa
-      - POSTGRES_PASSWORD=password
+      POSTGRES_DB: main-server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "6541:5432"
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
-      retries: 10
+      timeout: 5s
+      retries: 5
 
-  ewm-service:
+  # База данных для статистики (stats-server)
+  postgres-stat:
+    image: postgres:16.1
+    container_name: postgres-stat
+    environment:
+      POSTGRES_DB: stats-server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "6542:5432"
+    volumes:
+      - postgres_stat_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Основное приложение (main-server)
+  main-service:
     build:
-      context: ./ewm-service
+      context: ./evm-main-service
       dockerfile: Dockerfile
-    container_name: ewm-service
+    container_name: main-service
+    depends_on:
+      postgres-main:
+        condition: service_healthy
     ports:
       - "8080:8080"
-    depends_on:
-      ewm-db:
-        condition: service_healthy
-      stats-server:
-        condition: service_healthy
-    healthcheck:
-      test: curl -f http://ewm-service:8080/actuator/health || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm-db
-      SPRING_DATASOURCE_USERNAME: sa
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-main:5432/main-server
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+      STATS_SERVER_URL: http://stat-service:9090
+    restart: unless-stopped
 
-  ewm-db:
-    image: postgres:16.1
-    container_name: ewm-db
+  # Сервис статистики (stat-server)
+  stat-service:
+    build:
+      context: ./stat-svc/stat-server
+      dockerfile: Dockerfile
+    container_name: stat-service
+    depends_on:
+      postgres-stat:
+        condition: service_healthy
     ports:
-      - "5555:5432"
-    volumes:
-      - ./volumes/postgres/ewm-db:/var/lib/postgresql/data/
+      - "9090:9090"
     environment:
-      - POSTGRES_DB=ewm-db
-      - POSTGRES_USER=sa
-      - POSTGRES_PASSWORD=password
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-stat:5432/stats-server
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+    restart: unless-stopped
+
+volumes:
+  postgres_main_data:
+  postgres_stat_data:
