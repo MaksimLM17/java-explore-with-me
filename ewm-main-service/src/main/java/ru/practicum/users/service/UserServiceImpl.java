@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.UniqueConflictException;
 import ru.practicum.exception.NotFoundException;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findByParameters(List<Integer> ids, Integer from, Integer size) {
         int pageNumber = (int) Math.floor((double) from / size);
-        Pageable pageable = PageRequest.of(pageNumber, size);
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("id").ascending());
         Page<User> page = ids == null
                 ? userRepository.findAll(pageable)
                 : userRepository.findByIdIn(ids, pageable);

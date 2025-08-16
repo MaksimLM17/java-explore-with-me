@@ -40,20 +40,22 @@ public class RequestServiceImpl implements RequestService {
 
         validationCreated(user, event);
 
-        ParticipationRequest participationRequest;
+        ParticipationRequest participationRequest = createNewRequest(user, event, RequestState.PENDING);
 
-        if (!(event.isRequestModeration()) &&
-                (event.getParticipantLimit() > event.getConfirmedRequests() || event.getParticipantLimit() == 0)) {
+        if (event.getParticipantLimit() == 0) {
             participationRequest = createNewRequest(user, event, RequestState.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-
-            eventRepository.save(event);
-            log.info("Добавлен пользователь с id ={}, для участия в событии с id = {}", userId, eventId);
-            log.info("Новое количество участников в событии = {}", event.getConfirmedRequests());
-
-        } else {
-          participationRequest = createNewRequest(user, event, RequestState.PENDING);
         }
+
+        if (!(event.isRequestModeration()) &&
+                (event.getParticipantLimit() > event.getConfirmedRequests())) {
+            participationRequest = createNewRequest(user, event, RequestState.CONFIRMED);
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        }
+
+        eventRepository.save(event);
+        log.info("Добавлен пользователь с id ={}, для участия в событии с id = {}", userId, eventId);
+        log.info("Новое количество участников в событии = {}", event.getConfirmedRequests());
 
         return requestMapper.mapToDto(participationRequest);
     }

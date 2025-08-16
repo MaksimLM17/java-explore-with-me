@@ -28,9 +28,5 @@ spring:
     driverClassName: org.postgresql.Driver
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.hibernate.type.descriptor.sql: TRACE
-    org.hibernate.stat: DEBUG
-    org.hibernate.engine.jdbc.spi.SqlStatementLogger: DEBUG
-    ru.practicum: DEBUG
+    org.hibernate.SQL: INFO
+    ru.practicum: INFO

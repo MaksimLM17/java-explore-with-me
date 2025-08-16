@@ -18,7 +18,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 
     boolean existsByCategoryId(Integer categoryId);
 
-    //@Deprecated
     @Query("SELECT e FROM Event e " +
             "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
             "AND (:states IS NULL OR e.state IN :states) " +

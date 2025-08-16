@@ -34,7 +34,6 @@ public class CompilationPublicServiceImpl implements  CompilationPublicService {
 
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
-    private final EventRepository eventRepository;
     private final StatsClient statsClient;
 
     @Override
