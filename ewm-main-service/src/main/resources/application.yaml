@@ -1,11 +1,6 @@
 server:
   port: 8080
 
-stat-server:
-  url: http://localhost:9090
-
-app:
-  name: ewm-main-service
 spring:
   jpa:
     hibernate:
@@ -21,12 +16,22 @@ spring:
   sql:
     init:
       mode: always
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/main-server
-    username: postgres
-    password: 123
-    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://ewm-service:5555/ewm-db
+    username: sa
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+stats.server:
+  url: http://stats-server:9090
+
+app:
+  name: ewm-main-service
+
 logging:
   level:
-    org.hibernate.SQL: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+    org.hibernate.jdbc.bind: TRACE
     ru.practicum: INFO

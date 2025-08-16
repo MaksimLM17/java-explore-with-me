@@ -1,8 +1,8 @@
 server:
   port: 9090
+
+
 spring:
-  main:
-    allow-bean-definition-overriding: true
   jpa:
     hibernate:
       ddl-auto: none
@@ -14,11 +14,13 @@ spring:
           lob:
             non_contextual_creation: true
       show-sql: true
+
   sql:
     init:
       mode: always
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/stats-server
-    username: postgres
-    password: 123
-    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://stats-server:5432/stats-db
+    username: sa
+    password: password
+    driver-class-name: org.postgresql.Driver

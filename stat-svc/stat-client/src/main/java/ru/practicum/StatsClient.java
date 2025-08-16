@@ -29,7 +29,7 @@ public class StatsClient {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public StatsClient(@Value("${stat-server.url}") String serverUrl,
+    public StatsClient(@Value("${stats.server.url:http://stats-server:9090}") String serverUrl,
                        @Value("${app.name}") String appName,
                        RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
