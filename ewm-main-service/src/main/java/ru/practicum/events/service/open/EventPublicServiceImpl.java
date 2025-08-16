@@ -20,7 +20,6 @@ import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.state.State;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.StateException;
 import ru.practicum.mapper.EventMapper;
 
 import java.time.LocalDateTime;
