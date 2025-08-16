@@ -1,6 +1,4 @@
 
-version: '3.8'
-
 services:
   # Основная база данных (main-server)
   postgres-main:
@@ -47,6 +45,8 @@ services:
     depends_on:
       postgres-main:
         condition: service_healthy
+      stats-service:
+        condition: service_started
     ports:
       - "8080:8080"
     environment:

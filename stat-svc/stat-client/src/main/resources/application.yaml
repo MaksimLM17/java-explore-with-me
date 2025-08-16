@@ -1,5 +1,5 @@
 
 stat-server:
-  url: http://stat-server:9090
+  url: http://stat-service:9090
 app:
   name: ewm-main-service
