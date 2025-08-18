@@ -22,7 +22,7 @@ public class RequestsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto create(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
-                                          @RequestParam(defaultValue = "0") @Positive(message = MESSAGE_ERROR_ID)  Integer eventId) {
+                                          @RequestParam(defaultValue = "0") Integer eventId) {
         log.info("""
                 Получен запрос на создание нового запроса на участие в событии, с данными:\s
                 userId = {}\s
