@@ -1,7 +1,6 @@
 package ru.practicum.requests.controller;
 
 import jakarta.validation.constraints.Positive;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
