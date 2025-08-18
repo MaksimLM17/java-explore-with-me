@@ -15,7 +15,7 @@ import java.util.Set;
 public class NewCompilationDto {
 
     private Set<Integer> events;
-    private boolean pinned = false;
+    private Boolean pinned = false;
 
     @NotBlank(message = "Заголовок должен быть указан")
     @Size(min = 0, max = 50, message = "Заголовок превышает 50 символов!")

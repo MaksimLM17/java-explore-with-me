@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.events.location.Location;
+import ru.practicum.events.location.LocationDto;
 import ru.practicum.events.state.StateAction;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class UpdateEventDto {
     @Future(message = "Дата события должна быть в будущем")
     private LocalDateTime eventDate;
 
-    private Location location;
+    private LocationDto locationDto;
     private Boolean paid;
 
     @PositiveOrZero(message = "Количество участников не может быть меньше нуля! Ноль-без ограничения по количеству!")

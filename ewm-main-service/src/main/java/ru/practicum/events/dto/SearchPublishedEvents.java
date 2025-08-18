@@ -35,10 +35,10 @@ public class SearchPublishedEvents {
     private String sort = "EVENT_DATE";
 
     @PositiveOrZero
-    private int from = 0;
+    private Integer from = 0;
 
     @Positive
-    private int size = 10;
+    private Integer size = 10;
 
     @AssertTrue(message = "Дата начала не может быть позже даты окончания")
     public boolean isValidDateRange() {

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.events.location.Location;
+import ru.practicum.events.location.LocationDto;
 import ru.practicum.events.state.State;
 import ru.practicum.users.dto.UserShortDto;
 
@@ -30,7 +30,7 @@ public class EventDto {
 
     private UserShortDto initiator;
 
-    private Location location;
+    private LocationDto location;
 
     private Boolean paid;
 

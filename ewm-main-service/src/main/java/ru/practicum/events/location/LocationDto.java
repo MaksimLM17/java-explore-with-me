@@ -1,18 +1,16 @@
 package ru.practicum.events.location;
 
-import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
-public class Location {
+public class LocationDto {
     @NotNull(message = "Широта должна быть указана!")
-    private float lat;
+    private Float lat;
     @NotNull(message = "Долгота должна быть указана!")
-    private float lon;
+    private Float lon;
 }

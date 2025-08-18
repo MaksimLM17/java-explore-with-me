@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.events.location.Location;
+import ru.practicum.events.location.LocationDto;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +29,7 @@ public class NewEventDto {
     private LocalDateTime eventDate;
 
     @NotNull(message = "Координаты места проведения должны быть указаны!")
-    private Location location;
+    private LocationDto location;
     private Boolean paid = false;
 
     @PositiveOrZero(message = "Количество участников не может быть меньше нуля! Ноль-без ограничения по количеству!")

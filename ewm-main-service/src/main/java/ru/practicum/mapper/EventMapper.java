@@ -7,7 +7,7 @@ import ru.practicum.events.dto.UpdateAdminEventDto;
 import ru.practicum.events.dto.UpdateEventDto;
 import ru.practicum.events.model.Event;
 
-@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class})
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, LocationMapper.class})
 public interface EventMapper {
 
     @Mapping(target = "category", ignore = true)
