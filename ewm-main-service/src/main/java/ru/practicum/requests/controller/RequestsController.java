@@ -1,6 +1,7 @@
 package ru.practicum.requests.controller;
 
 import jakarta.validation.constraints.Positive;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class RequestsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto create(@PathVariable @Positive(message = MESSAGE_ERROR_ID) Integer userId,
-                                          @RequestParam(defaultValue = "0") Integer eventId) {
+                                          @RequestParam @Positive Integer eventId) {
         log.info("""
                 Получен запрос на создание нового запроса на участие в событии, с данными:\s
                 userId = {}\s
