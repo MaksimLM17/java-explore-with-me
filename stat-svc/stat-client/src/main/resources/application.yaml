@@ -1,5 +1,0 @@
-server:
-  port: 9091
-
-stat-server:
-  url: http://localhost:9090
