@@ -17,21 +17,22 @@ import ru.practicum.comments.service.close.CommentPrivateService;
 public class CommentPrivateController {
 
     private final CommentPrivateService commentPrivateService;
+    private static final String USER_ID_IN_HEADER = "X-Sharer-User-Id";
 
     @PostMapping("{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto create(@RequestBody @Valid CommentRequestDto commentRequestDto,
                              @PathVariable @Positive Integer eventId,
-                             @RequestHeader @Positive Integer userId) {
+                             @RequestHeader(USER_ID_IN_HEADER) @Positive Integer userId) {
         log.info("Получен запрос на создание комментария для события - {}, пользователем - {}, с данными: {}",
-                eventId, commentRequestDto, userId);
+                eventId, userId,commentRequestDto);
         return commentPrivateService.create(commentRequestDto, eventId, userId);
     }
 
     @PutMapping("{commentId}")
     public CommentDto update(@RequestBody @Valid CommentRequestDto commentRequestDto,
                              @PathVariable @Positive Long commentId,
-                             @RequestHeader @Positive Integer userId) {
+                             @RequestHeader(USER_ID_IN_HEADER) @Positive Integer userId) {
         log.info("Получен запрос на обновление комментария - {}, пользователем - {}, с данными: {}",
                 commentId, commentRequestDto, userId);
         return commentPrivateService.update(commentRequestDto, commentId, userId);
@@ -40,7 +41,7 @@ public class CommentPrivateController {
     @DeleteMapping("{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable @Positive Long commentId,
-                       @RequestHeader @Positive Integer userId) {
+                       @RequestHeader(USER_ID_IN_HEADER) @Positive Integer userId) {
         log.info("Получен запрос на удаление комментария - {}, пользователем - {}",
                 commentId, userId);
         commentPrivateService.delete(commentId, userId);

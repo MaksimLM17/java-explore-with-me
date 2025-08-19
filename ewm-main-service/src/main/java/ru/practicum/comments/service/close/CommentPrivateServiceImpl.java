@@ -10,8 +10,10 @@ import ru.practicum.comments.model.CommentStatus;
 import ru.practicum.comments.repository.CommentRepository;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
+import ru.practicum.events.state.State;
+import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.UniqueConflictException;
+import ru.practicum.exception.StateException;
 import ru.practicum.mapper.CommentMapper;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
@@ -34,6 +36,10 @@ public class CommentPrivateServiceImpl implements CommentPrivateService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id = %d, не найден!".formatted(userId)));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с id = %d, не найдено!".formatted(eventId)));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            log.error("Попытка создать комментарий к неопубликованному событию!");
+            throw new StateException("Добавить комментарий можно только к опубликованному событию");
+        }
         Comment comment = Comment.builder()
                 .text(commentRequestDto.getText())
                 .author(user)
@@ -79,7 +85,7 @@ public class CommentPrivateServiceImpl implements CommentPrivateService {
     private void validateAuthorComment(Comment comment, Integer userId) {
         if (!comment.getAuthor().getId().equals(userId)) {
             log.error("Попытка обновить комментарий не автором! commentId = {}, userId = {}", comment.getId(), userId);
-            throw new UniqueConflictException("Обновлять комментарии может только автор!");
+            throw new ForbiddenException("Обновлять комментарии может только автор!");
         }
     }
 }
