@@ -9,28 +9,17 @@
 	"item": [
 		{
 			"name": "Добавление нового комментария",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "X-Sharer-User-Id",
 						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
 						"type": "text"
 					}
 				],
@@ -59,28 +48,17 @@
 		},
 		{
 			"name": "Обновление комментария пользователем",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
 			"request": {
 				"method": "PUT",
 				"header": [
 					{
 						"key": "X-Sharer-User-Id",
 						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
 						"type": "text"
 					}
 				],
@@ -109,43 +87,20 @@
 		},
 		{
 			"name": "Удаление комментария",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
-							"    pm.response.to.have.status(204);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
 			"request": {
 				"method": "DELETE",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json"
+						"key": "X-Sharer-User-Id",
+						"value": "1",
+						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{{request_body}}"
-				},
 				"url": {
-					"raw": "http://localhost:8080/events/comments/1",
-					"protocol": "http",
+					"raw": "{{baseURL}}/events/comments/1",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "8080",
 					"path": [
 						"events",
 						"comments",
@@ -159,14 +114,18 @@
 			"name": "Модерация комментария",
 			"request": {
 				"method": "PATCH",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost:8080/admin/comments/1?status=Published",
-					"protocol": "http",
+					"raw": "{{baseURL}}/admin/comments/1?status=Published",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "8080",
 					"path": [
 						"admin",
 						"comments",
@@ -184,32 +143,20 @@
 		},
 		{
 			"name": "Получение всех комментариев события",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
-							"    pm.response.to.be.ok;    \r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost:8080/events/1/comments?from=0&size=5",
-					"protocol": "http",
+					"raw": "{{baseURL}}/events/1/comments?from=0&size=5",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "8080",
 					"path": [
 						"events",
 						"1",
