@@ -235,6 +235,14 @@
 			"key": "baseURL",
 			"value": "http://localhost:8080",
 			"type": "default"
+		},
+		{
+			"key": "commentId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
 		}
 	]
 }
