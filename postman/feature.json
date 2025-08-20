@@ -1,0 +1,195 @@
+{
+	"info": {
+		"_postman_id": "b490893a-d5c1-473e-b94e-09aa8e569d33",
+		"name": "Feature Comments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43339529",
+		"_collection_link": "https://restless-meteor-152487.postman.co/workspace/Team-Workspace~a3d737d1-a5bd-4365-85f1-45b58c80bea8/collection/43339529-b490893a-d5c1-473e-b94e-09aa8e569d33?action=share&source=collection_link&creator=43339529"
+	},
+	"item": [
+		{
+			"name": "Добавление нового комментария",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Sharer-User-Id",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Добавление нового комментария\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/events/comments/1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"events",
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Обновление комментария пользователем",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Sharer-User-Id",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Обновление комментария\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/events/comments/1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"events",
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удаление комментария",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Sharer-User-Id",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/events/comments/1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"events",
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Модерация комментария",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/admin/comments/1?status=Published",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"comments",
+						"1"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "Published"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение всех комментариев события",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/events/1/comments?from=0&size=5",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"events",
+						"1",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080",
+			"type": "default"
+		},
+		{
+			"key": "commentId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		}
+	]
+}
